@@ -4,30 +4,30 @@
         ""
     ],
     "companyName": "angela_huangjj@126.com",
-    "longName": "SWABE",
+    "longName": "MENU1-2",
     "projectType": "native",
     "resources": {
         "media": [
             {
-                "file": "images/catch1.png",
-                "name": "IMAGE_MENU_ICON_CATCH1",
+                "file": "images/Oxygen.png",
+                "name": "IMAGE_MENU_ICON_Oxygen",
                 "type": "png"
             },
             {
-                "file": "images/FEED1.png",
-                "name": "IMAGE_MENU_ICON_FEED1",
+                "file": "images/Hytrogen.png",
+                "name": "IMAGE_MENU_ICON_Hydrogen",
                 "type": "png"
             },
             {
-                "file": "images/challenge2.png",
-                "name": "IMAGE_MENU_ICON_CHALLENGE1",
+                "file": "images/Aluminum.png",
+                "name": "IMAGE_MENU_ICON_Aluminum",
                 "type": "png"
             }
         ]
     },
     "sdkVersion": "2",
-    "shortName": "SWABE",
-    "uuid": "3f492de1-a4ae-48f3-bb83-4ec1c020b57e",
+    "shortName": "MENU1-2",
+    "uuid": "38feee47-4a27-46f9-b355-b0457c26d813",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {

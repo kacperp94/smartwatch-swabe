@@ -2,10 +2,6 @@
   
 #define NUM_MENU_SECTIONS 1  
 #define NUM_MENU_ITEMS 3
-  
-Window *window1;
-Layer *basic_layer;
-TextLayer *text_layer;
 static Window *s_main_window;
 static MenuLayer *s_menu_layer;
 static GBitmap *s_menu_bitmap1;
@@ -16,9 +12,10 @@ static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *data
   return NUM_MENU_SECTIONS;
 }
 
-
 static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
-  return NUM_MENU_ITEMS;
+  
+      return NUM_MENU_ITEMS;
+  
 }
 
 
@@ -26,11 +23,9 @@ static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t s
   return MENU_CELL_BASIC_HEADER_HEIGHT;
 }
 
-
 static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
-      menu_cell_basic_header_draw(ctx, cell_layer, "Menu");
+      menu_cell_basic_header_draw(ctx, cell_layer, "FOOD");
 }
-
 
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
   // Determine which section we're going to draw in
@@ -39,32 +34,30 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
       switch (cell_index->row) {
         case 0:
           // This is a basic menu item with a title and subtitle
-          menu_cell_basic_draw(ctx, cell_layer, "Challenge", NULL, s_menu_bitmap1);
+          menu_cell_basic_draw(ctx, cell_layer, "Aluminum", "makes me stronger!", s_menu_bitmap1);
           break;
         case 1:
           // This is a basic menu icon with a cycling icon
-          menu_cell_basic_draw(ctx, cell_layer, "FEED",NULL, s_menu_bitmap2);
+          menu_cell_basic_draw(ctx, cell_layer, "Hydrogen","gives me energy!", s_menu_bitmap2);
           break;
         case 2: 
-          menu_cell_basic_draw(ctx, cell_layer, "Catch",NULL, s_menu_bitmap3);
+          menu_cell_basic_draw(ctx, cell_layer, "Oxygen","keeps me alive!", s_menu_bitmap3);
           break;
       }
     break;
   }  
 }
 
-
-
 static void main_window_load(Window *window) {
-  // load the bitmap assets
-  s_menu_bitmap1=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_CHALLENGE1);
-  s_menu_bitmap2=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_FEED1);
-  s_menu_bitmap3=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_CATCH1);
+  // Here we load the bitmap assets
+  s_menu_bitmap1=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_Aluminum);
+  s_menu_bitmap2=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_Hydrogen);
+  s_menu_bitmap3=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_Oxygen);
 
-  // load the background
- 
+  // And also load the background
+  //s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_HEART1);
 
-  // prepare to initialize the menu layer
+  // Now we prepare to initialize the menu layer
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
 
@@ -93,44 +86,15 @@ static void main_window_unload(Window *window) {
  
 }
 
-
-
-static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
- //if(window1==1){
-   s_main_window = window_create();
+static void init() {
+  s_main_window = window_create();
   window_set_window_handlers(s_main_window, (WindowHandlers) {
     .load = main_window_load,
     .unload = main_window_unload,
   });
   window_stack_push(s_main_window, true);
- 
-}
-
-static void click_config_provider(void *context) {
-  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
-
-}
-void basic_update_proc(Layer*l,GContext *ctx){
-  graphics_context_set_text_color(ctx,GColorBlack);
-  graphics_draw_rect(ctx,GRect(32,61,80,30));
-}
-void init(){
-  window1=window_create();
-  Layer *window_layer=window_get_root_layer(window1);
-  text_layer=text_layer_create(GRect(32,60,100,100));
-  text_layer_set_font(text_layer,fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
-  text_layer_set_text(text_layer,"*Swabe*");
-  layer_add_child(window_layer,text_layer_get_layer(text_layer));
-  basic_layer=layer_create(GRect(0,0,144,168));
- // layer_set_update_proc(basic_layer,basic_update_proc);
-  layer_add_child(window_layer,basic_layer); 
-  window_stack_push(window1,true);
-  window_set_click_config_provider(window1, click_config_provider);
-  
 }
 static void deinit() {
-  // Destroy Window
-  window_destroy(window1);
   window_destroy(s_main_window);
 }
 
@@ -139,4 +103,3 @@ int main(void) {
   app_event_loop();
   deinit();
 }
-
