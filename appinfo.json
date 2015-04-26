@@ -1,21 +1,33 @@
 {
-    "appKeys": {
-        "KEY_LATITUDE": 1,
-        "KEY_LOCATION": 0,
-        "KEY_TEMPERATURE": 2
-    },
+    "appKeys": {},
     "capabilities": [
-        "location"
+        ""
     ],
-    "companyName": "kim392@illinois.edu",
-    "longName": "testing out js",
+    "companyName": "angela_huangjj@126.com",
+    "longName": "MENU1-2",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/Oxygen.png",
+                "name": "IMAGE_MENU_ICON_Oxygen",
+                "type": "png"
+            },
+            {
+                "file": "images/Hytrogen.png",
+                "name": "IMAGE_MENU_ICON_Hydrogen",
+                "type": "png"
+            },
+            {
+                "file": "images/Aluminum.png",
+                "name": "IMAGE_MENU_ICON_Aluminum",
+                "type": "png"
+            }
+        ]
     },
     "sdkVersion": "2",
-    "shortName": "testing out js",
-    "uuid": "7ea01e8f-9ded-467c-b41f-0935c021388c",
+    "shortName": "MENU1-2",
+    "uuid": "38feee47-4a27-46f9-b355-b0457c26d813",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {

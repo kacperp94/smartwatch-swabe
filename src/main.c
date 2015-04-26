@@ -1,116 +1,107 @@
 #include <pebble.h>
-#include <catch.h>
- 
-Window* window;
-TextLayer *time_layer;
-TextLayer *latitude_layer;
-char time_buffer[64]; char latitude_buffer[64];
-enum {
-  KEY_LATITUDE = 1,
-};
+  
+#define NUM_MENU_SECTIONS 1  
+#define NUM_MENU_ITEMS 3
+static Window *s_main_window;
+// static Window*start_window1;
+// static Layer *basic_layer;
+// static TextLayer *text_layer;
+static MenuLayer *s_menu_layer;
+static GBitmap *s_menu_bitmap1;
+static GBitmap *s_menu_bitmap2;
+static GBitmap *s_menu_bitmap3;
 
-TextLayer *poke_layer;
-char poke_buffer[64];
+static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
+  return NUM_MENU_SECTIONS;
+}
+
+static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
+  
+      return NUM_MENU_ITEMS;
+  
+}
 
 
-// Add-on
-static catch_t catch_obj;
+static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
+  return MENU_CELL_BASIC_HEADER_HEIGHT;
+}
 
-static void in_received_handler(DictionaryIterator *iter, void *context)
-{
-  //How to process received Tuples.
-  (void) context;
-     
-    //Get data
-    //Read first item
-    Tuple *t = dict_read_first(iter);
-    //Repeat reading until no more returned
-    while(t != NULL)
-    {
-        // switch based process_tuple() fn to spearate out the process
-        int key = t->key;
-        int value = t->value->int32;
-        catch_obj.lati = value;
-        switch(key) {
-        case KEY_LATITUDE:
-          snprintf(latitude_buffer, sizeof("Latitude: XX"), "Latitude: %d", value);
-          text_layer_set_text(latitude_layer, (char*) &latitude_buffer);
+static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
+      menu_cell_basic_header_draw(ctx, cell_layer, "FOOD");
+}
+
+static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
+  // Determine which section we're going to draw in
+  switch (cell_index->section) {
+    case 0:
+      switch (cell_index->row) {
+        case 0:
+          // This is a basic menu item with a title and subtitle
+          menu_cell_basic_draw(ctx, cell_layer, "Aluminum", "makes me stronger!", s_menu_bitmap1);
           break;
-        }
-        t = dict_read_next(iter);
-    }
-}
-// callback for receiving data from phone
-
-// 4/17 Kim's Code:
-void down_click_handler(ClickRecognizerRef recognizer, void *context)
-{
-      catch_timer(&catch_obj, time_layer);
-      catch_decide(&catch_obj, poke_layer);
-}
-
-static void click_config_provider(void *context) {
-  // 4/17 Kim's Code:
-  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+        case 1:
+          // This is a basic menu icon with a cycling icon
+          menu_cell_basic_draw(ctx, cell_layer, "Hydrogen","gives me energy!", s_menu_bitmap2);
+          break;
+        case 2: 
+          menu_cell_basic_draw(ctx, cell_layer, "Oxygen","keeps me alive!", s_menu_bitmap3);
+          break;
+      }
+    break;
+  }  
 }
 
-static TextLayer* init_text_layer(GRect location, GColor colour, GColor background, const char *res_id, GTextAlignment alignment)
-{
-  TextLayer *layer = text_layer_create(location);
-  text_layer_set_text_color(layer, colour);
-  text_layer_set_background_color(layer, background);
-  text_layer_set_font(layer, fonts_get_system_font(res_id));
-  text_layer_set_text_alignment(layer, alignment);
- 
-  return layer;
+static void main_window_load(Window *window) {
+  // Here we load the bitmap assets
+  s_menu_bitmap1=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_Aluminum);
+  s_menu_bitmap2=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_Hydrogen);
+  s_menu_bitmap3=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_Oxygen);
+
+  // And also load the background
+  //s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_HEART1);
+
+  // Now we prepare to initialize the menu layer
+  Layer *window_layer = window_get_root_layer(window);
+  GRect bounds = layer_get_frame(window_layer);
+
+  // Create the menu layer
+  s_menu_layer = menu_layer_create(bounds);
+  menu_layer_set_callbacks(s_menu_layer, NULL, (MenuLayerCallbacks){
+    .get_num_sections = menu_get_num_sections_callback,
+    .get_num_rows = menu_get_num_rows_callback,
+    .get_header_height = menu_get_header_height_callback,
+    .draw_header = menu_draw_header_callback,
+    .draw_row = menu_draw_row_callback,
+  });
+
+  // Bind the menu layer's click config provider to the window for interactivity
+  menu_layer_set_click_config_onto_window(s_menu_layer, window);
+
+  layer_add_child(window_layer, menu_layer_get_layer(s_menu_layer));
 }
 
-void window_load(Window *window)
-{ 
-  latitude_layer = init_text_layer(GRect(5, 60, 144, 30), GColorBlack, GColorClear, "RESOURCE_ID_GOTHIC_18", GTextAlignmentLeft);
-  text_layer_set_text(latitude_layer, "Latitude: N/A");
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(latitude_layer));
-  
-  time_layer = init_text_layer(GRect(35, 90, 144, 30), GColorBlack, GColorClear, "RESOURCE_ID_GOTHIC_18", GTextAlignmentLeft);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(time_layer));
-  
-  time_layer = init_text_layer(GRect(55, 160, 144, 30), GColorBlack, GColorClear, "RESOURCE_ID_GOTHIC_18", GTextAlignmentLeft);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(poke_layer));
-}
+
+
+static void main_window_unload(Window *window) {
+  // Destroy the menu layer
+  menu_layer_destroy(s_menu_layer);
+
  
-void window_unload(Window *window)
-{
-  text_layer_destroy(latitude_layer);
-  text_layer_destroy(time_layer);
-  text_layer_destroy(poke_layer);
 }
 
-void init()
-{
-  window = window_create();
-  WindowHandlers handlers = {
-    .load = window_load,
-    .unload = window_unload
-  };
-  window_set_window_handlers(window, handlers);
-  
-  window_set_click_config_provider(window, click_config_provider);
-  
-  //Set up appmessage itself
-  app_message_register_inbox_received(in_received_handler);
-  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());    //Largest possible input and output buffer sizes
- 
-  window_stack_push(window, true);
+static void init() {
+  s_main_window = window_create();
+  window_set_window_handlers(s_main_window, (WindowHandlers) {
+    .load = main_window_load,
+    .unload = main_window_unload,
+  });
+  window_stack_push(s_main_window, true);
 }
- 
-void deinit()
-{
-  // corresponding de-init procedure.
-  window_destroy(window);
+static void deinit() {
+  window_destroy(s_main_window);
 }
- 
-int main(void)
-{
+
+int main(void) {
   init();
   app_event_loop();
   deinit();
