@@ -1,0 +1,24 @@
+{
+    "appKeys": {
+        "KEY_LATITUDE": 1,
+        "KEY_LOCATION": 0,
+        "KEY_TEMPERATURE": 2
+    },
+    "capabilities": [
+        "location"
+    ],
+    "companyName": "kim392@illinois.edu",
+    "longName": "testing out js",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "2",
+    "shortName": "testing out js",
+    "uuid": "7ea01e8f-9ded-467c-b41f-0935c021388c",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
