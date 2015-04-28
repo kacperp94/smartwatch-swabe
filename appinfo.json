@@ -3,31 +3,51 @@
     "capabilities": [
         ""
     ],
-    "companyName": "angela_huangjj@126.com",
-    "longName": "SWABE",
+    "companyName": "neo.zheyuan@gmail.com",
+    "longName": "BIRTH",
     "projectType": "native",
     "resources": {
         "media": [
             {
-                "file": "images/catch1.png",
-                "name": "IMAGE_MENU_ICON_CATCH1",
+                "file": "images/BIRTH_FRAME_9.png",
+                "name": "FRAME_5",
                 "type": "png"
             },
             {
-                "file": "images/FEED1.png",
-                "name": "IMAGE_MENU_ICON_FEED1",
+                "file": "images/BIRTH_FRAME_8.png",
+                "name": "FRAME_4",
                 "type": "png"
             },
             {
-                "file": "images/challenge2.png",
-                "name": "IMAGE_MENU_ICON_CHALLENGE1",
+                "file": "images/BIRTH_FRAME_7.png",
+                "name": "FRAME_3",
+                "type": "png"
+            },
+            {
+                "file": "images/BIRTH_FRAME_5.png",
+                "name": "FRAME_2",
+                "type": "png"
+            },
+            {
+                "file": "images/BIRTH_FRAME_1.png",
+                "name": "FRAME_1",
+                "type": "png"
+            },
+            {
+                "file": "images/BIRTH_FRAME_0.png",
+                "name": "FRAME_0",
+                "type": "png"
+            },
+            {
+                "file": "images/wb.png",
+                "name": "IMAGE_WB",
                 "type": "png"
             }
         ]
     },
     "sdkVersion": "2",
-    "shortName": "SWABE",
-    "uuid": "3f492de1-a4ae-48f3-bb83-4ec1c020b57e",
+    "shortName": "BIRTH",
+    "uuid": "6f6cf7a0-6cf7-4945-a444-47b835e9cbad",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
