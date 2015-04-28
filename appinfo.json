@@ -4,38 +4,38 @@
         ""
     ],
     "companyName": "neo.zheyuan@gmail.com",
-    "longName": "BIRTH",
+    "longName": "Animation2",
     "projectType": "native",
     "resources": {
         "media": [
             {
-                "file": "images/BIRTH_FRAME_9.png",
-                "name": "FRAME_5",
-                "type": "png"
-            },
-            {
-                "file": "images/BIRTH_FRAME_8.png",
+                "file": "images/EAT_FRAME_4.png",
                 "name": "FRAME_4",
                 "type": "png"
             },
             {
-                "file": "images/BIRTH_FRAME_7.png",
+                "file": "images/EAT_FRAME_0.png",
+                "name": "FRAME_0",
+                "type": "png"
+            },
+            {
+                "file": "images/EAT_FRAME_5.png",
+                "name": "FRAME_5",
+                "type": "png"
+            },
+            {
+                "file": "images/EAT_FRAME_3.png",
                 "name": "FRAME_3",
                 "type": "png"
             },
             {
-                "file": "images/BIRTH_FRAME_5.png",
+                "file": "images/EAT_FRAME_2.png",
                 "name": "FRAME_2",
                 "type": "png"
             },
             {
-                "file": "images/BIRTH_FRAME_1.png",
+                "file": "images/EAT_FRAME_1.png",
                 "name": "FRAME_1",
-                "type": "png"
-            },
-            {
-                "file": "images/BIRTH_FRAME_0.png",
-                "name": "FRAME_0",
                 "type": "png"
             },
             {
@@ -46,8 +46,8 @@
         ]
     },
     "sdkVersion": "2",
-    "shortName": "BIRTH",
-    "uuid": "6f6cf7a0-6cf7-4945-a444-47b835e9cbad",
+    "shortName": "Animation2",
+    "uuid": "22e9a308-8fd8-4d68-aaca-2c54b521a0e7",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
