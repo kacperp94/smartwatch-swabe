@@ -1,98 +1,166 @@
 #include <pebble.h>
-static Window *window;
-
-static const uint32_t timeout_ms = 500;
-
-static int current_frame = 0;
-static Layer *anim_layer;
-
-#define TOTAL_FRAMES 6 
-static GBitmap *anim_images[TOTAL_FRAMES];
-static BitmapLayer *anim_layers[TOTAL_FRAMES];
-
-const int ANIM_IMAGE_RESOURCE_IDS[] = {
-  RESOURCE_ID_FRAME_0,
-  RESOURCE_ID_FRAME_1,
-  RESOURCE_ID_FRAME_2,
-  RESOURCE_ID_FRAME_3,
-  RESOURCE_ID_FRAME_4,
-  RESOURCE_ID_FRAME_5
-};
-
-static GBitmap *mask_image;
-static BitmapLayer *mask_layer;
-
-static AppTimer *timer;
-
-void change_background() {
-	int prev_frame = current_frame-1;
-	if(current_frame == 0) {
-		prev_frame = TOTAL_FRAMES-1;
-	}
-	if(current_frame >= TOTAL_FRAMES) {
-		current_frame = 0;
-	}
-	layer_set_hidden(bitmap_layer_get_layer(anim_layers[current_frame]), false);
-	layer_set_hidden(bitmap_layer_get_layer(anim_layers[prev_frame]), true);
-
-	current_frame++;
-}
-
-static void update_image_layer(Layer *layer, GContext* ctx) {
-	change_background();
-}
-
-static void timer_callback(void *context) {
-  layer_mark_dirty(anim_layer);
-  timer = app_timer_register(timeout_ms, timer_callback, NULL);
-}
-
-static void init(void) {
-  window = window_create();
-  Layer *window_layer = window_get_root_layer(window);
-  GRect frame = { {0, 0}, {144, 168} };
-	
-  anim_layer = layer_create(frame);
-  layer_set_update_proc(anim_layer, update_image_layer);
-  layer_add_child(window_layer, anim_layer);
-	
-  for (int i = 0; i < TOTAL_FRAMES; ++i) {
-    anim_layers[i] = bitmap_layer_create(frame);
-    layer_add_child(anim_layer, bitmap_layer_get_layer(anim_layers[i]));
-		anim_images[i] = gbitmap_create_with_resource(ANIM_IMAGE_RESOURCE_IDS[i]);
-		bitmap_layer_set_bitmap(anim_layers[i], anim_images[i]);
-		layer_set_hidden(bitmap_layer_get_layer(anim_layers[i]), true);
-  }
-	layer_set_hidden(bitmap_layer_get_layer(anim_layers[TOTAL_FRAMES-1]), false);
+#include <catch.h>
   
-	mask_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_WB);
-  mask_layer = bitmap_layer_create(frame);
-	//bitmap_layer_set_compositing_mode(mask_layer, GCompOpOr);
-  bitmap_layer_set_bitmap(mask_layer, mask_image);
-  layer_add_child(window_layer, bitmap_layer_get_layer(mask_layer));
+#define NUM_MENU_SECTIONS 1  
+#define NUM_MENU_ITEMS 3
+  
+Window *window1;
+Layer *basic_layer;
+TextLayer *text_layer;
+static Window *s_main_window;
+static MenuLayer *s_menu_layer;
+static GBitmap *s_menu_bitmap1;
+static GBitmap *s_menu_bitmap2;
+static GBitmap *s_menu_bitmap3;
 
-  window_stack_push(window, true);
+// 4/17 Kim's Code:
+static catch_t catch_obj;
+static void in_received_handler(DictionaryIterator *iter, void *context)
+{
+  //How to process received Tuples.
+  (void) context;
+     
+    //Get data
+    //Read first item
+    Tuple *t = dict_read_first(iter);
+    //Repeat reading until no more returned
+    while(t != NULL)
+    {
+        // switch based process_tuple() fn to spearate out the process
+        int key = t->key;
+        int value = t->value->int32;
+        t = dict_read_next(iter);
+    }
+}
+// -----------------------------------------------------------------------------------
 
-  timer = app_timer_register(timeout_ms, timer_callback, NULL);
+static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
+  return NUM_MENU_SECTIONS;
 }
 
-static void deinit(void) {
-  for (int i = 0; i < TOTAL_FRAMES; i++) {
-    layer_remove_from_parent(bitmap_layer_get_layer(anim_layers[i]));
-    gbitmap_destroy(anim_images[i]);
-    anim_images[i] = NULL;
-    bitmap_layer_destroy(anim_layers[i]);
-    anim_layers[i] = NULL;
-  }	
-  layer_destroy(anim_layer);
-	
-	layer_remove_from_parent(bitmap_layer_get_layer(mask_layer));
-	gbitmap_destroy(mask_image);
-	mask_image = NULL;
-	bitmap_layer_destroy(mask_layer);
-	mask_layer = NULL;
-	
-  window_destroy(window);
+static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
+  return NUM_MENU_ITEMS;
+}
+
+static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
+  return MENU_CELL_BASIC_HEADER_HEIGHT;
+}
+
+static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
+      menu_cell_basic_header_draw(ctx, cell_layer, "Menu");
+}
+
+static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
+  // Determine which section we're going to draw in
+  switch (cell_index->section) {
+    case 0:
+      switch (cell_index->row) {
+        case 0:
+          // This is a basic menu item with a title and subtitle
+          menu_cell_basic_draw(ctx, cell_layer, "Challenge", NULL, s_menu_bitmap1);
+          break;
+        case 1:
+          // This is a basic menu icon with a cycling icon
+          menu_cell_basic_draw(ctx, cell_layer, "FEED",NULL, s_menu_bitmap2);
+          break;
+        case 2: 
+          menu_cell_basic_draw(ctx, cell_layer, "Catch", NULL, s_menu_bitmap3);
+          break;
+      }
+    break;
+  }  
+}
+
+static void main_window_load(Window *window) { 
+  // load the bitmap assets
+  s_menu_bitmap1=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_CHALLENGE1);
+  s_menu_bitmap2=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_FEED1);
+  s_menu_bitmap3=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_ICON_CATCH1);
+  // load the background
+
+  // prepare to initialize the menu layer
+  Layer *window_layer = window_get_root_layer(window);
+  GRect bounds = layer_get_frame(window_layer);
+
+  // Create the menu layer
+  s_menu_layer = menu_layer_create(bounds);
+  menu_layer_set_callbacks(s_menu_layer, NULL, (MenuLayerCallbacks){
+    .get_num_sections = menu_get_num_sections_callback,
+    .get_num_rows = menu_get_num_rows_callback,
+    .get_header_height = menu_get_header_height_callback,
+    .draw_header = menu_draw_header_callback,
+    .draw_row = menu_draw_row_callback,
+  });
+
+  // Bind the menu layer's click config provider to the window for interactivity
+  menu_layer_set_click_config_onto_window(s_menu_layer, window);
+
+  layer_add_child(window_layer, menu_layer_get_layer(s_menu_layer));
+}
+
+static void main_window_unload(Window *window) {
+  // Destroy the menu layer
+  menu_layer_destroy(s_menu_layer);
+}
+
+static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
+ //if(window1==1){
+  s_main_window = window_create();
+  window_set_window_handlers(s_main_window, (WindowHandlers) {
+    .load = main_window_load,
+    .unload = main_window_unload,
+  });
+  window_stack_push(s_main_window, true);
+}
+
+// 4/17 Kim's Code:
+void down_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+      catch_speak(&catch_obj, text_layer);
+}
+
+static void click_config_provider(void *context) {
+  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+  
+  // 4/17 Kim's Code:
+  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+}
+
+void basic_update_proc(Layer*l,GContext *ctx){
+  graphics_context_set_text_color(ctx,GColorBlack);
+  graphics_draw_rect(ctx,GRect(32,61,80,30));
+}
+
+void init(){
+  window1=window_create();
+  Layer *window_layer=window_get_root_layer(window1);
+  text_layer=text_layer_create(GRect(32,60,100,100));
+  text_layer_set_font(text_layer,fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+  text_layer_set_text(text_layer,"*Swabe*");
+  layer_add_child(window_layer,text_layer_get_layer(text_layer));
+  basic_layer=layer_create(GRect(0,0,144,168));
+ // layer_set_update_proc(basic_layer,basic_update_proc);
+  layer_add_child(window_layer,basic_layer); 
+  //window_stack_push(window1,true);
+  window_set_click_config_provider(window1, click_config_provider);
+  
+  // 4/14 Kim's Edit Code:
+  /* Initialize catch object */
+  catch_init(&catch_obj);
+  /*WindowHandlers handlers = {
+    .load = main_window_load,
+    .unload = main_window_unload
+  };
+  window_set_window_handlers(window1, handlers);
+  app_message_register_inbox_received(in_received_handler);
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());*/
+  window_stack_push(window1, true);
+}
+
+static void deinit() {
+  // Destroy Window
+  window_destroy(window1);
+  window_destroy(s_main_window);
 }
 
 int main(void) {
