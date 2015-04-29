@@ -2,6 +2,11 @@
 #include <time.h>
 #include "catch.h"
 
+
+//IDK, if it should be here or in main
+//enum {
+//KEY_SUM = 0,
+//};
 void catch_init(catch_t *cptr)
 {
   cptr->is24Pass = 0;
@@ -33,10 +38,13 @@ void catch_speak(catch_t *cptr, TextLayer * text_layer)
       cptr->is24Pass = 1;
       cptr->catch_hours = temp_hours;
       text_layer_set_text(text_layer, "Can catch!");
+      //if(user clicks catch)
+      //{take value of sum calculated in .js}
     }
     else
     {
       cptr->is24Pass = 0;
       text_layer_set_text(text_layer, "Wait to catch!");
-    }  
+    } 
+
 }
