@@ -9,7 +9,7 @@ var GetLat = function() {
   for(i=0; i < lat.length; i++){
     c = lat.charAt(i);
     if(c >= '0' && c <= '9'){
-      sum += c;
+      sum += parseInt(c);
     }
   }
   var dict = {"KEY_SUM" : sum};
@@ -20,6 +20,6 @@ var GetLat = function() {
 Pebble.addEventListener("ready",
   function(e) {
     //App is ready to receive JS messages
-    getLat();
+    GetLat();
   }
 );
