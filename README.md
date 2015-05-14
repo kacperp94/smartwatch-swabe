@@ -1,1 +1,5 @@
-This app uses stuff to do stuff on stuff 
+SmartWatch SWABE:
+Angela Huang
+Sunwoo Kim
+Kacper Piotrowski (kptrwsk2)
+David Zheyuan Gu
